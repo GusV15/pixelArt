@@ -2,7 +2,7 @@ var paleta = document.getElementById('paleta');
 
 var grillaPixeles = document.getElementById('grilla-pixeles');  
 
-
+var indicadorDeColor = document.getElementById('indicador-de-color');
 
 var nombreColores = ['White', 'LightYellow',
   'LemonChiffon', 'LightGoldenrodYellow', 'PapayaWhip', 'Moccasin', 'PeachPuff', 'PaleGoldenrod', 'Bisque', 'NavajoWhite', 'Wheat', 'BurlyWood', 'Tan',
@@ -27,7 +27,7 @@ var nombreColores = ['White', 'LightYellow',
 ];
 
 /* 
-función que recorra la lista de colores nombreColores, 
+Función que recorra la lista de colores nombreColores, 
 y por cada color crea un elemento div y le asigne un 
 background-color: color y la clase color-paleta. 
 */
@@ -48,33 +48,65 @@ function generarGrillaPixeles(){
     grillaPixeles.appendChild(nuevoElemento);
   }
 }
+
 /*
-var colorPincel = document.getElementById('indicador-de-color');
-
-function copiarSeleccion(e){
-  var divACopiar = e.target[0].style.backgroundColor;
-   colorPincel.style.backgroundColor = divACopiar;
-
+* Función que selecciona un color de la paleta y lo muestra en el indicador de color,
+* al realizar un click.
+*/
+function copiarColorDePaleta(){
+paleta.childNodes.forEach(function(element){
+  element.addEventListener('click',seleccionarColor); 
+});
+}
+function seleccionarColor(e){
+  indicadorDeColor.style.backgroundColor = e.target.style.backgroundColor;
 }
 
-  */
+/*
+* Función que selecciona un color de la paleta y lo muestra en el indicador de color,
+* al realizar un click.
+*/
+function pintarGrilla(){
+  grillaPixeles.childNodes.forEach(function(element){
+    element.addEventListener('click',seleccionarColorBis);
+  });
+}
+function seleccionarColorBis(e2){
+  e2.target.style.backgroundColor = indicadorDeColor.style.backgroundColor;
+}
 
 // Variable para guardar el elemento 'color-personalizado'
 // Es decir, el que se elige con la rueda de color.
 var colorPersonalizado = document.getElementById('color-personalizado');
 
 colorPersonalizado.addEventListener('change', 
-  (() => {
+  (function() {
     // Se guarda el color de la rueda en colorActual
     colorActual = colorPersonalizado.value;
     // Completar para que cambie el indicador-de-color al colorActual
-    document.getElementById('indicador-de-color').style.backgroundColor = colorActual;
+    indicadorDeColor.style.backgroundColor = colorActual;
+
   })
 );
+
+var estadoDeMouse;
+function detectarEstadoDeMouse(){
+  estadoDeMouse = 'noPresionado'
+  indicadorDeColor.addEventListener('mouseDown', function(){
+    console.log(estadoDeMouse);
+  })
+  indicadorDeColor.addEventListener('mouseup', function(){
+    estadoDeMouse = 'presionado';
+    console.log(estadoDeMouse);
+  })
+}
 
 window.onload = function(){
   generarGrillaPixeles();
   generarPaletaDeColores();
+  copiarColorDePaleta();
+  pintarGrilla();
+  detectarEstadoDeMouse();
 }
 
 
