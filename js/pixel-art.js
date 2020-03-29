@@ -1,8 +1,8 @@
 var paleta = document.getElementById('paleta');
-
-var grillaPixeles = document.getElementById('grilla-pixeles');  
-
+var grillaPixeles = document.getElementById('grilla-pixeles');
 var indicadorDeColor = document.getElementById('indicador-de-color');
+// Variable para guardar el elemento 'color-personalizado.
+var colorPersonalizado = document.getElementById('color-personalizado');
 
 var nombreColores = ['White', 'LightYellow',
   'LemonChiffon', 'LightGoldenrodYellow', 'PapayaWhip', 'Moccasin', 'PeachPuff', 'PaleGoldenrod', 'Bisque', 'NavajoWhite', 'Wheat', 'BurlyWood', 'Tan',
@@ -31,82 +31,127 @@ Función que recorra la lista de colores nombreColores,
 y por cada color crea un elemento div y le asigne un 
 background-color: color y la clase color-paleta. 
 */
-function generarPaletaDeColores(){
-  
+function generarPaletaDeColores() {
   for (let i = 0; i < nombreColores.length; i++) {
     let nuevoElemento = document.createElement('div');
     nuevoElemento.style.backgroundColor = nombreColores[i];
     nuevoElemento.className = 'color-paleta';
-    paleta.appendChild(nuevoElemento);  
+    paleta.appendChild(nuevoElemento);
   }
-  
 }
 
-function generarGrillaPixeles(){
+/*
+Función que genera la grilla de pixeles en la que se va a dibujar.
+*/
+function generarGrillaPixeles() {
   for (let i = 0; i < 1750; i++) {
     let nuevoElemento = document.createElement('div');
     grillaPixeles.appendChild(nuevoElemento);
   }
 }
 
-/*
-* Función que selecciona un color de la paleta y lo muestra en el indicador de color,
-* al realizar un click.
+/* Guia 2 - Paso 1
+Función que selecciona un color de la paleta y al realizar un click 
+lo muestra en el indicador de color.
 */
-function copiarColorDePaleta(){
-paleta.childNodes.forEach(function(element){
-  element.addEventListener('click',seleccionarColor); 
-});
-}
-function seleccionarColor(e){
+
+function seleccionarColorGrilla(e) {
   indicadorDeColor.style.backgroundColor = e.target.style.backgroundColor;
 }
-
-/*
-* Función que selecciona un color de la paleta y lo muestra en el indicador de color,
-* al realizar un click.
-*/
-function pintarGrilla(){
-  grillaPixeles.childNodes.forEach(function(element){
-    element.addEventListener('click',seleccionarColorBis);
-  });
+function copiarColorDePaleta() {
+  paleta.childNodes.forEach(function (element) {
+    element.addEventListener('click', seleccionarColorGrilla);
+  })
 }
-function seleccionarColorBis(e2){
-  e2.target.style.backgroundColor = indicadorDeColor.style.backgroundColor;
+// Guia 2 -Paso 2
+function seleccionarColorPaleta(e) {
+  e.target.style.backgroundColor = indicadorDeColor.style.backgroundColor;
+}
+// Función que pinta un pixel al hacer click en un cuadro de la grilla de colores.
+function pintarGrilla() {
+  grillaPixeles.childNodes.forEach(function (element) {
+    element.addEventListener('click', seleccionarColorPaleta);
+  })
 }
 
-// Variable para guardar el elemento 'color-personalizado'
-// Es decir, el que se elige con la rueda de color.
-var colorPersonalizado = document.getElementById('color-personalizado');
-
-colorPersonalizado.addEventListener('change', 
-  (function() {
+// Guia 2 - Paso 3
+// Función que modifica el color del indicador de colores con el seleccionado en la grilla.
+function pintarIndicadorDeColores() {
+  colorPersonalizado.addEventListener('change', function () {
     // Se guarda el color de la rueda en colorActual
     colorActual = colorPersonalizado.value;
     // Completar para que cambie el indicador-de-color al colorActual
     indicadorDeColor.style.backgroundColor = colorActual;
-
-  })
-);
-
-var estadoDeMouse;
-function detectarEstadoDeMouse(){
-  estadoDeMouse = 'noPresionado'
-  indicadorDeColor.addEventListener('mouseDown', function(){
-    console.log(estadoDeMouse);
-  })
-  indicadorDeColor.addEventListener('mouseup', function(){
-    estadoDeMouse = 'presionado';
-    console.log(estadoDeMouse);
   })
 }
 
-window.onload = function(){
+/* Guia 2 - Paso 4 y 5
+*  Esta función realiza la validacion de si el mouse esta presionado o no, 
+*  si lo está pinta los pixeles, en caso contrario no.
+*/
+function pintarGrillaEnMovimiento() {
+  let estaPresionado = false;
+  grillaPixeles.addEventListener('mousedown', function () {
+    estaPresionado = true;
+  });
+  grillaPixeles.addEventListener('mouseup', function () {
+    estaPresionado = false;
+  });
+  grillaPixeles.addEventListener('mousemove', function (e) {
+    if (estaPresionado == true) {
+      seleccionarColorPaleta(e)
+    }
+  })
+}
+
+// Guia 3 - Paso 1
+// Borrado animado de pixeles
+function animarPixeles() {
+  var $pixelBorrado = $("#grilla-pixeles div").animate({ "background-color": "#ffffff" }, 2500);
+}
+function borrarPixeles() {
+  $("#borrar").click(animarPixeles);
+
+}
+
+// Guia 3 - Paso 2
+//cargar superheroes
+function cargarSuperheroes() {
+  $("#batman").click(function () {
+    cargarSuperheroe(batman);
+  });
+
+  $("#wonder").click(function () {
+    cargarSuperheroe(wonder);
+  });
+
+  $("#flash").click(function () {
+    cargarSuperheroe(flash);
+  });
+
+  $("#invisible").click(function () {
+    cargarSuperheroe(invisible);
+  });
+}
+
+// Guia 3 - paso 3
+// Guarda imagen dibujada
+function guardarImagen (){
+  $("#guardar").click(function() {
+    guardarPixelArt();
+  });
+}
+
+window.onload = function () {
   generarGrillaPixeles();
   generarPaletaDeColores();
   copiarColorDePaleta();
+  pintarIndicadorDeColores();
   pintarGrilla();
-  detectarEstadoDeMouse();
+  pintarGrillaEnMovimiento();
+  borrarPixeles();
+  cargarSuperheroes();
+  guardarImagen();
 }
 
 
